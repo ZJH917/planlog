@@ -250,9 +250,67 @@ export const usePlanStore = defineStore('planlog', () => {
       })
   })
 
+  // 从 cells 数组（originRow/originCol/cellText）组装 row 对象
+  function cellsToRows(cells) {
+    if (!cells || !cells.length) return { header: [], rows: [] }
+    // 第一行 = header
+    const headerRow = Math.min(...cells.map(c => c.originRow ?? 0))
+    const headerCells = cells.filter(c => c.originRow === headerRow)
+    const header = headerCells.sort((a, b) => (a.originCol ?? 0) - (b.originCol ?? 0)).map(c => c.cellText ?? c.originalCellValue ?? '')
+    const dataCells = cells.filter(c => c.originRow > headerRow)
+    const rows = []
+    let cur = null
+    for (const c of dataCells.sort((a, b) => (a.originRow ?? 0) - (b.originRow ?? 0) || (a.originCol ?? 0) - (b.originCol ?? 0))) {
+      const r = c.originRow
+      if (!cur || cur._row !== r) {
+        if (cur) rows.push(cur)
+        cur = { _row: r }
+      }
+      const col = c.originCol ?? 0
+      const field = header[col] || `col_${col}`
+      // 优先取 cellText，其次 understandableType.value，最后 originalCellValue
+      let val = c.cellText
+      if ((val === undefined || val === '') && c.understandableType) val = c.understandableType.value
+      if (val === undefined) val = c.originalCellValue
+      cur[field] = val
+    }
+    if (cur) rows.push(cur)
+    return { header, rows }
+  }
+
+  // 从 data.json 加载（GitHub Pages 静态托管方案）
+  async function loadFromDataJson(url = './data.json') {
+    syncStatus.value = 'syncing'
+    try {
+      const r = await fetch(url + '?_=' + Date.now())
+      if (!r.ok) throw new Error('HTTP ' + r.status)
+      const data = await r.json()
+      const { rows } = cellsToRows(data.rows || [])
+      // 第一次加载：用历史快照（无对比）
+      if (!snapshots.value.length) {
+        // 把现有项目作为「历史快照」初始化，不产生变更记录
+        const initialItems = rows.map(parseRow).filter(p => p['工号'])
+        snapshots.value.push({ date: data.fetchedAt, items: initialItems, syncedAt: data.fetchedAt })
+        projects.value = initialItems
+        lastSyncTime.value = data.fetchedAt
+        syncStatus.value = 'idle'
+        return { ok: true, projects: initialItems, changes: [] }
+      }
+      // 后续加载：正常对比
+      const result = syncProjects(rows, data.fetchedAt)
+      return { ok: true, ...result }
+    } catch (e) {
+      syncStatus.value = 'error'
+      console.error('loadFromDataJson failed:', e)
+      return { ok: false, error: e.message }
+    }
+  }
+
   return {
     projects, snapshots, changes, changeReasons, lastSyncTime, syncStatus,
     todayNewItems, todayWarehouseItems, todayChanges, changeFrequency, expiryAlerts,
-    syncProjects, setChangeReason, getChangesByWorkId, normalizeDate, calcImpact, DATE_COLUMNS, PROCESS_CHAIN
+    syncProjects, setChangeReason, getChangesByWorkId, normalizeDate, calcImpact,
+    cellsToRows, loadFromDataJson,
+    DATE_COLUMNS, PROCESS_CHAIN
   }
 })
