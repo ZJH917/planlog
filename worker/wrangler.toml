@@ -1,0 +1,10 @@
+name = "planlog-worker"
+main = "index.js"
+compatibility_date = "2024-01-01"
+
+[[kv_namespaces]]
+binding = "PLANLOG"
+id = "YOUR_KV_NAMESPACE_ID"
+
+[vars]
+KVDATA_TTL = "604800"
