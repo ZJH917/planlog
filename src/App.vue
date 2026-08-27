@@ -7,7 +7,18 @@
 </template>
 
 <script setup>
+import { onMounted } from 'vue'
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
+import { usePlanStore } from './stores/planlog.js'
+
+const store = usePlanStore()
+
+onMounted(() => {
+  // 启动时从 data.json 加载（GitHub Pages 静态托管）
+  store.loadFromDataJson()
+  // 每 60 秒自动刷新
+  setInterval(() => store.loadFromDataJson(), 60_000)
+})
 </script>
 
 <style>
