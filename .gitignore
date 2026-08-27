@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.env
+*.log
+.DS_Store
+_temp_*.cjs
+_rmgit.cjs
+_kill_git.cjs
+_git_init.cjs
