@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>计划日志预览</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:#f0f2f5;padding:20px}
+.container{max-width:1200px;margin:0 auto}
+.header{display:flex;justify-content:space-between;align-items:center;background:#fff;border-radius:12px;padding:16px 24px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.header h1{font-size:20px;color:#333}
+.header h1 span{color:#409eff;font-size:14px;margin-left:8px}
+.sync-time{font-size:13px;color:#999;margin-top:4px}
+.sync-badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:12px;background:#e8f4ff;color:#409eff}
+.cards{display:grid;grid-template-columns:1fr 1fr 2fr;gap:14px;margin-bottom:14px}
+.card{background:#fff;border-radius:12px;padding:22px 24px;box-shadow:0 1px 4px rgba(0,0,0,.08);cursor:pointer;transition:box-shadow .2s}
+.card:hover{box-shadow:0 4px 12px rgba(0,0,0,.12)}
+.card-top{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.card-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.card-new .card-icon{background:#e6f7ff}
+.card-warehouse .card-icon{background:#fff7e6}
+.card-change .card-icon{background:#fff1f0}
+.card-num{font-size:34px;font-weight:700;color:#222;line-height:1}
+.card-label{font-size:14px;color:#888;margin-top:4px}
+.card-desc{font-size:12px;color:#409eff;margin-top:8px}
+.change-btns{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
+.btn-delay,.btn-advance{padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;border:none;cursor:pointer;display:flex;align-items:center;gap:6px}
+.btn-delay{background:#fff1f0;color:#cf1322;border:1.5px solid #ffccc7}
+.btn-advance{background:#f6ffed;color:#389e0d;border:1.5px solid #b7eb8f}
+.btn-badge{background:rgba(0,0,0,.08);border-radius:10px;padding:1px 7px;font-size:12px}
+.trend-section{background:#fff;border-radius:12px;padding:20px 24px;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.trend-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.trend-header h3{font-size:15px;color:#333;font-weight:600}
+.trend-months{display:flex;gap:16px;font-size:12px}
+.month-label{display:flex;align-items:center;gap:6px;color:#666}
+.month-dot{width:10px;height:10px;border-radius:50%}
+.trend-grid{display:flex}
+.month-col{flex:1;min-width:0}
+.month-title{font-size:12px;color:#888;text-align:center;margin-bottom:8px;font-weight:500}
+.bars-wrap{display:flex;align-items:flex-end;gap:2px;height:80px;padding:0 2px}
+.bar-day{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;min-width:0}
+.bar{width:100%;border-radius:2px 2px 0 0;min-height:3px}
+.bar-label{font-size:9px;color:#bbb;text-align:center;height:12px}
+.divider{width:1px;background:#eee;margin:0 3px;align-self:stretch}
+.quick-actions{background:#fff;border-radius:12px;padding:14px 24px;box-shadow:0 1px 4px rgba(0,0,0,.08);margin-top:14px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.quick-actions label{font-size:13px;color:#666}
+.quick-input{border:1px solid #dcdfe6;border-radius:6px;padding:6px 12px;font-size:13px;width:220px;outline:none}
+.quick-input:focus{border-color:#409eff}
+.action-btn{padding:7px 14px;border-radius:6px;font-size:13px;border:1px solid #dcdfe6;background:#fff;color:#666;cursor:pointer;display:flex;align-items:center;gap:5px}
+.action-btn:hover{color:#409eff;border-color:#409eff}
+</style>
+</head>
+<body>
+<div class="container>
+
+  <div class="header">
+    <div>
+      <h1>📋 计划日志 <span>PlanLog</span></h1>
+      <div class="sync-time" style="margin-top:4px">最后同步：2026-08-28 17:03 &nbsp;<span class="sync-badge">已同步</span></div>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center">
+      <button class="action-btn" style="border-color:#409eff;color:#409eff">🔄 手动刷新</button>
+    </div>
+  </div>
+
+  <div class="cards">
+    <div class="card card-new">
+      <div class="card-top">
+        <div class="card-icon">🆕</div>
+        <div><div class="card-num">3</div><div class="card-label">今日新增</div></div>
+      </div>
+      <div class="card-desc">点击查看详情 &rarr;</div>
+    </div>
+    <div class="card card-warehouse">
+      <div class="card-top">
+        <div class="card-icon">📦</div>
+        <div><div class="card-num">2</div><div class="card-label">今日入库</div></div>
+      </div>
+      <div class="card-desc">点击查看详情 &rarr;</div>
+    </div>
+    <div class="card card-change">
+      <div class="card-top">
+        <div class="card-icon">✏️</div>
+        <div><div class="card-num">9</div><div class="card-label">今日修改</div></div>
+      </div>
+      <div class="card-desc">点击查看全部变更 &rarr;</div>
+      <div class="change-btns">
+        <button class="btn-delay">📅 延期 <span class="btn-badge">4 项 &middot; 延期 35 天</span></button>
+        <button class="btn-advance">⏰ 提前 <span class="btn-badge">5 项 &middot; 提前 90 天</span></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="trend-section">
+    <div class="trend-header">
+      <h3>📊 变更趋势（近三月每日变更数量）</h3>
+      <div class="trend-months">
+        <div class="month-label"><div class="month-dot" style="background:#409eff"></div>2026年8月</div>
+        <div class="month-label"><div class="month-dot" style="background:#95d5b4"></div>2026年7月</div>
+        <div class="month-label"><div class="month-dot" style="background:#bde0fe"></div>2026年6月</div>
+      </div>
+    </div>
+    <div class="trend-grid">
+      <div class="month-col">
+        <div class="month-title">6月</div>
+        <div class="bars-wrap"><div class="bar-day"><div class="bar" style="height:3px;background:#bde0fe"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#bde0fe"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#bde0fe"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#bde0fe"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#bde0fe"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#bde0fe"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#bde0fe"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#bde0fe"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#bde0fe"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#bde0fe"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#bde0fe"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#bde0fe"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#bde0fe"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#bde0fe"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#bde0fe"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#bde0fe"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#bde0fe"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#bde0fe"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#bde0fe"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#bde0fe"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#bde0fe"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#bde0fe"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#bde0fe"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#bde0fe"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#bde0fe"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#bde0fe"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#bde0fe"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#bde0fe"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#bde0fe"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#bde0fe"></div><div class="bar-label"></div></div></div>
+      </div>
+      <div class="divider"></div>
+      <div class="month-col">
+        <div class="month-title">7月</div>
+        <div class="bars-wrap"><div class="bar-day"><div class="bar" style="height:3px;background:#95d5b4"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#95d5b4"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#95d5b4"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#95d5b4"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#95d5b4"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#95d5b4"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#95d5b4"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#95d5b4"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#95d5b4"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#95d5b4"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#95d5b4"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#95d5b4"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#95d5b4"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#95d5b4"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#95d5b4"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#95d5b4"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#95d5b4"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#95d5b4"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#95d5b4"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#95d5b4"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#95d5b4"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#95d5b4"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#95d5b4"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#95d5b4"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#95d5b4"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#95d5b4"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#95d5b4"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#95d5b4"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:76px;background:#95d5b4"></div><div class="bar-label">29</div></div><div class="bar-day"><div class="bar" style="height:76px;background:#95d5b4"></div><div class="bar-label">30</div></div><div class="bar-day"><div class="bar" style="height:76px;background:#95d5b4"></div><div class="bar-label">31</div></div></div>
+      </div>
+      <div class="divider"></div>
+      <div class="month-col">
+        <div class="month-title">8月</div>
+        <div class="bars-wrap"><div class="bar-day"><div class="bar" style="height:3px;background:#409eff"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#409eff"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#409eff"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#409eff"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#409eff"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#409eff"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#409eff"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#409eff"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#409eff"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#409eff"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#409eff"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#409eff"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#409eff"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#409eff"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#409eff"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#409eff"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#409eff"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#409eff"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#409eff"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#409eff"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#409eff"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#409eff"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#409eff"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#409eff"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#409eff"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#409eff"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#409eff"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:3px;background:#409eff"></div><div class="bar-label"></div></div><div class="bar-day"><div class="bar" style="height:76px;background:#409eff"></div><div class="bar-label">29</div></div><div class="bar-day"><div class="bar" style="height:76px;background:#409eff"></div><div class="bar-label">30</div></div><div class="bar-day"><div class="bar" style="height:76px;background:#409eff"></div><div class="bar-label">31</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="quick-actions">
+    <label>🔍 工号查询</label>
+    <input class="quick-input" placeholder="输入工号（如 XJ26110060）" />
+    <button class="action-btn">📈 变更频次榜</button>
+    <button class="action-btn">⏰ 到期提醒</button>
+  </div>
+</div>
+</body>
+</html>
