@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>首页卡片预览</title>
+<style>
+*{box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;margin:0;padding:24px;background:#f0f2f5;min-height:100vh}
+.wrap{max-width:1100px;margin:0 auto}
+
+/* 顶部标题 */
+.header{margin-bottom:20px}
+.header h1{font-size:20px;color:#303133;font-weight:600;margin:0 0 4px}
+.header p{font-size:13px;color:#909399;margin:0}
+.sync-bar{display:inline-block;font-size:12px;color:#67c23a;background:#f0f9eb;padding:2px 10px;border-radius:10px;margin-top:6px}
+
+/* 三卡片 + 两个按钮 */
+.cards-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+
+/* 通用卡片样式 */
+.card{
+  display:inline-flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:20px 28px;border-radius:12px;cursor:pointer;
+  transition:all 0.2s;min-width:120px
+}
+.card:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,0.12)}
+.card .c-num{font-size:36px;font-weight:700;line-height:1}
+.card .c-lbl{font-size:13px;margin-top:6px;opacity:0.9}
+
+/* 今日新增 */
+.card-new{background:linear-gradient(135deg,#409eff,#66b1ff);color:#fff}
+
+/* 今日入库 */
+.card-warehouse{background:linear-gradient(135deg,#67c23a,#85ce61);color:#fff}
+
+/* 今日修改 */
+.card-change-wrap{
+  display:flex;align-items:center;gap:0;
+  background:#fff;border-radius:12px;
+  padding:12px 4px 12px 20px;
+  box-shadow:0 2px 12px rgba(0,0,0,0.08);
+  border:1px solid #ebeef5
+}
+.card-change-main{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:10px 20px;border-radius:10px;cursor:pointer;
+  background:linear-gradient(135deg,#f56c6b,#e64242);color:#fff;
+  transition:all 0.2s;min-width:100px
+}
+.card-change-main:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(245,108,108,0.3)}
+.card-change-main .c-num{font-size:36px;font-weight:700;line-height:1}
+.card-change-main .c-lbl{font-size:13px;margin-top:6px;opacity:0.9}
+
+/* 两个按钮 */
+.action-btns{display:flex;flex-direction:column;gap:8px;margin-left:4px}
+
+/* 拖期按钮 */
+.btn-delay{
+  display:flex;align-items:center;gap:8px;
+  padding:10px 16px;border-radius:8px;
+  background:#fff;border:1.5px solid #f56c6c;color:#f56c6c;
+  cursor:pointer;font-size:13px;font-weight:500;
+  transition:all 0.2s;white-space:nowrap;
+  box-shadow:0 1px 4px rgba(0,0,0,0.06)
+}
+.btn-delay:hover{background:#fef0f0;border-color:#f56c6b;transform:translateY(-1px);box-shadow:0 3px 8px rgba(245,108,108,0.2)}
+.btn-delay .emoji{font-size:16px}
+.btn-delay .b-num{font-weight:700;font-size:15px}
+.btn-delay .b-unit{font-size:12px;opacity:0.75}
+
+/* 提前按钮 */
+.btn-ahead{
+  display:flex;align-items:center;gap:8px;
+  padding:10px 16px;border-radius:8px;
+  background:#fff;border:1.5px solid #67c23a;color:#67c23a;
+  cursor:pointer;font-size:13px;font-weight:500;
+  transition:all 0.2s;white-space:nowrap;
+  box-shadow:0 1px 4px rgba(0,0,0,0.06)
+}
+.btn-ahead:hover{background:#f0f9eb;border-color:#67c23a;transform:translateY(-1px);box-shadow:0 3px 8px rgba(103,194,58,0.2)}
+.btn-ahead .emoji{font-size:16px}
+.btn-ahead .b-num{font-weight:700;font-size:15px}
+.btn-ahead .b-unit{font-size:12px;opacity:0.75}
+
+/* 按钮激活态（演示） */
+.btn-active{border-width:2px;font-weight:600}
+
+/* 搜索区 */
+.search-row{display:flex;gap:12px;align-items:center;margin-bottom:16px;flex-wrap:wrap}
+.search-input-wrap{flex:1;min-width:200px;position:relative}
+.search-input{
+  width:100%;padding:9px 14px;border:1px solid #dcdfe6;border-radius:8px;
+  font-size:14px;outline:none;transition:border-color 0.2s;
+  box-sizing:border-box
+}
+.search-input:focus{border-color:#409eff}
+.search-count{
+  font-size:12px;color:#909399;margin-top:4px;
+  /* 演示用静态文字 */
+}
+
+/* 变更弹窗（演示静态） */
+.dialog-demo{
+  background:#fff;border-radius:12px;padding:20px;
+  box-shadow:0 8px 32px rgba(0,0,0,0.12);margin-top:8px;
+  border:1px solid #ebeef5
+}
+.dialog-title{font-size:16px;font-weight:600;color:#303133;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid #ebeef5}
+.tag{font-size:12px;padding:2px 8px;border-radius:3px;display:inline-block}
+.tag-info{background:#f4f4f5;color:#909399}
+.tag-danger{background:#fef0f0;color:#f56c6c}
+.tag-success{background:#f0f9eb;color:#67c23a}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:9px 8px;border-bottom:1px solid #ebeef5;text-align:left;vertical-align:middle}
+th{background:#f5f7fa;color:#606266;font-size:12px;font-weight:600}
+tr:last-child td{border-bottom:none}
+.workid b{font-size:13px}
+.date{color:#909399;font-size:12px}
+.field-label{font-size:12px}
+.diff-tag{font-size:11px;padding:1px 6px;border-radius:3px;margin-top:3px;display:inline-block}
+.delay-tag{background:#fef0f0;color:#f56c6c}
+.ahead-tag{background:#f0f9eb;color:#67c23a}
+.link{color:#409eff;text-decoration:none;cursor:pointer;font-size:12px}
+.link:hover{text-decoration:underline}
+.parent td{background:#fafbfc}
+details summary{cursor:pointer;font-size:13px;color:#606266}
+details summary::-webkit-details-marker{color:#909399}
+.inner-table{margin:6px 0 6px 20px;width:auto}
+.inner-table th,.inner-table td{padding:7px 8px;font-size:12px}
+.sub{color:#909399;font-size:11px;margin-left:4px}
+
+/* 模拟激活按钮 */
+.btn-active{background:#fef0f0!important}
+
+/* 提示 */
+.hint-bar{font-size:12px;color:#909399;margin-top:12px;padding:8px 12px;background:#fafafa;border-radius:6px;border-left:3px solid #409eff}
+</style></head>
+<body>
+<div class="wrap">
+
+<!-- 标题 -->
+<div class="header">
+  <h1>📋 计划日志 PlanLog</h1>
+  <p>金山文档制造计划 · 变更监控</p>
+  <div class="sync-bar">● 最后同步：2026-08-28 13:12:44</div>
+</div>
+
+<!-- 三卡片 + 两个按钮 -->
+<div class="cards-row">
+
+  <!-- 今日新增 -->
+  <div class="card card-new">
+    <span class="c-num">3</span>
+    <span class="c-lbl">今日新增</span>
+  </div>
+
+  <!-- 今日入库 -->
+  <div class="card card-warehouse">
+    <span class="c-num">1</span>
+    <span class="c-lbl">今日入库</span>
+  </div>
+
+  <!-- 今日修改 + 拖期/提前按钮 -->
+  <div class="card-change-wrap">
+    <div class="card-change-main" style="margin-right:4px">
+      <span class="c-num">5</span>
+      <span class="c-lbl">今日修改</span>
+    </div>
+    <div class="action-btns">
+
+      <!-- 拖期按钮（当前激活状态） -->
+      <div class="btn-delay btn-active">
+        <span class="emoji">📅</span>
+        <span>拖期&nbsp;<span class="b-num">3</span> 项</span>
+        <span class="b-unit">· 延期 15 天</span>
+      </div>
+
+      <!-- 提前按钮 -->
+      <div class="btn-ahead">
+        <span class="emoji">⏰</span>
+        <span>提前&nbsp;<span class="b-num">2</span> 项</span>
+        <span class="b-unit">· 提前 8 天</span>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<!-- 搜索行 -->
+<div class="search-row">
+  <div class="search-input-wrap">
+    <input class="search-input" placeholder="搜索工号（如 XJ261）—— 实时过滤" />
+  </div>
+</div>
+
+<!-- 拖期弹窗演示（模拟打开状态） -->
+<div class="dialog-demo">
+  <div class="dialog-title">📅 拖期（3 项 · 累计延期 15 天 · 按幅度降序）</div>
+  <table>
+    <thead><tr>
+      <th>工号</th><th>变更日期</th><th>变更工序</th><th>变更次数</th><th>变更内容</th><th>原因</th><th>影响</th><th>操作</th>
+    </tr></thead>
+    <tbody>
+      <!-- 大幅度延期 -->
+      <tr class="parent">
+        <td colspan="8">
+          <details open><summary><b>XJ26110046</b> · 2 次变更 · <span class="diff-tag delay-tag">延期 102 天</span></summary>
+          <table class="inner-table">
+            <tr>
+              <td class="workid"><b>XJ26110046</b> <span class="sub">(1/2)</span></td>
+              <td class="date">2026-08-28</td>
+              <td class="field-label"><span class="tag tag-info">毛坯到货</span></td>
+              <td><span class="tag tag-danger">第 2 次</span></td>
+              <td><code style="font-size:11px">2026-11-25 → 2026-08-15</code><br/><span class="diff-tag delay-tag">延期 102 天</span></td>
+              <td><a class="link">填写原因</a></td>
+              <td><a class="link">填写影响</a></td>
+              <td><a class="link">详情</a></td>
+            </tr>
+            <tr>
+              <td class="workid"><b>XJ26110046</b> <span class="sub">(2/2)</span></td>
+              <td class="date">2026-08-27</td>
+              <td class="field-label"><span class="tag tag-info">装配入库</span></td>
+              <td><span class="tag tag-danger">第 1 次</span></td>
+              <td><code style="font-size:11px">2026-09-30 → 2026-09-15</code><br/><span class="diff-tag delay-tag">延期 15 天</span></td>
+              <td><a class="link">填写原因</a></td>
+              <td><a class="link">填写影响</a></td>
+              <td><a class="link">详情</a></td>
+            </tr>
+          </table>
+        </details>
+        </td>
+      </tr>
+      <!-- 单条 -->
+      <tr>
+        <td class="workid"><b>CS26140004</b></td>
+        <td class="date">2026-08-28</td>
+        <td class="field-label"><span class="tag tag-info">装配入库</span></td>
+        <td><span class="tag tag-danger">第 1 次</span></td>
+        <td><code style="font-size:11px">2026-09-30 → 2026-09-15</code><br/><span class="diff-tag delay-tag">延期 15 天</span></td>
+        <td><a class="link">填写原因</a></td>
+        <td><a class="link">填写影响</a></td>
+        <td><a class="link">详情</a></td>
+      </tr>
+      <tr>
+        <td class="workid"><b>TZ25270006</b></td>
+        <td class="date">2026-08-28</td>
+        <td class="field-label"><span class="tag tag-info">装配入库</span></td>
+        <td><span class="tag tag-danger">第 1 次</span></td>
+        <td><code style="font-size:11px">2026-10-15 → 2026-09-15</code><br/><span class="diff-tag delay-tag">延期 30 天</span></td>
+        <td><a class="link">填写原因</a></td>
+        <td><a class="link">填写影响</a></td>
+        <td><a class="link">详情</a></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- 提示 -->
+<div class="hint-bar">
+  💡 点「拖期」/「提前」按钮切换显示 · 输入工号实时搜索 · 同一工号多条自动折叠 · 延期/提前天数按该字段改动幅度计算
+</div>
+
+</div>
+</body></html>
